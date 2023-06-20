@@ -1,33 +1,25 @@
-import React, { useState } from "react";
-import {
-  Button,
-  FormControl,
-  FormLabel,
-  Input,
-  InputGroup,
-  InputRightElement,
-  VStack,
-} from "@chakra-ui/react";
-import { useToast } from "@chakra-ui/toast";
+import { Button } from "@chakra-ui/button";
+import { FormControl, FormLabel } from "@chakra-ui/form-control";
+import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
+import { VStack } from "@chakra-ui/layout";
+import { useState } from "react";
 import axios from "axios";
-import { useHistory } from "react-router";
+import { useToast } from "@chakra-ui/react";
+import { useHistory } from "react-router-dom";
 
 const Login = () => {
-  const [name] = useState();
   const [show, setShow] = useState(false);
+  const handleClick = () => setShow(!show);
+  const toast = useToast();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const [confirmpassword] = useState();
-  const [picLoading, setPicLoading] = useState(false);
-  const [pic] = useState();
-  const handleClick = () => setShow(!show);
+  const [loading, setLoading] = useState(false);
 
-  const toast = useToast();
   const history = useHistory();
 
-  const submitHandler = async() => {
-     setPicLoading(true);
-    if (!name || !email || !password || !confirmpassword) {
+  const submitHandler = async () => {
+    setLoading(true);
+    if (!email || !password) {
       toast({
         title: "Please Fill all the Feilds",
         status: "warning",
@@ -35,46 +27,34 @@ const Login = () => {
         isClosable: true,
         position: "bottom",
       });
-      setPicLoading(false);
+      setLoading(false);
       return;
     }
-    if (password !== confirmpassword) {
-      toast({
-        title: "Passwords Do Not Match",
-        status: "warning",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom",
-      });
-      return;
-    }
-    console.log(name, email, password, pic);
+
+    // console.log(email, password);
     try {
       const config = {
         headers: {
           "Content-type": "application/json",
         },
       };
+
       const { data } = await axios.post(
-        "/api/user",
-        {
-          name,
-          email,
-          password,
-          pic,
-        },
+        "/api/user/login",
+        { email, password },
         config
       );
-      console.log(data);
+
+      // console.log(JSON.stringify(data));
       toast({
-        title: "Registration Successful",
+        title: "Login Successful",
         status: "success",
         duration: 5000,
         isClosable: true,
         position: "bottom",
       });
       localStorage.setItem("userInfo", JSON.stringify(data));
-      setPicLoading(false);
+      setLoading(false);
       history.push("/chats");
     } catch (error) {
       toast({
@@ -85,25 +65,29 @@ const Login = () => {
         isClosable: true,
         position: "bottom",
       });
-      setPicLoading(false);
+      setLoading(false);
     }
   };
+
   return (
-    <VStack spacing="5px">
+    <VStack spacing="10px">
       <FormControl id="email" isRequired>
-        <FormLabel>Email</FormLabel>
+        <FormLabel>Email Address</FormLabel>
         <Input
-          placeholder="Enter Your email"
+          value={email}
+          type="email"
+          placeholder="Enter Your Email Address"
           onChange={(e) => setEmail(e.target.value)}
         />
       </FormControl>
       <FormControl id="password" isRequired>
         <FormLabel>Password</FormLabel>
-        <InputGroup>
+        <InputGroup size="md">
           <Input
-            type={show ? "text" : "password"}
-            placeholder="Set Password"
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
+            type={show ? "text" : "password"}
+            placeholder="Enter password"
           />
           <InputRightElement width="4.5rem">
             <Button h="1.75rem" size="sm" onClick={handleClick}>
@@ -117,17 +101,20 @@ const Login = () => {
         width="100%"
         style={{ marginTop: 15 }}
         onClick={submitHandler}
-        setPicLoading={picLoading}
+        isLoading={loading}
       >
         Login
       </Button>
       <Button
-        colorScheme="Guest Login"
+        variant="solid"
+        colorScheme="red"
         width="100%"
-        style={{ marginTop: 15 }}
-        onClick={submitHandler}
+        onClick={() => {
+          setEmail("guest@example.com");
+          setPassword("123456");
+        }}
       >
-        Login
+        Get Guest User Credentials
       </Button>
     </VStack>
   );
