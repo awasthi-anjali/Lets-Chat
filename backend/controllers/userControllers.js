@@ -2,6 +2,8 @@ const asyncHandler = require("express-async-handler");
 const User = require('../models/userModel');
 const generateToken = require('../config/generateToken');
 const { Error } = require("mongoose");
+
+
 const registerUser=asyncHandler(async(req,res)=>{
     const { name, email, password, picture } = req.body;
 

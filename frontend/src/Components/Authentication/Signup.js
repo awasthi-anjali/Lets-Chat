@@ -18,10 +18,10 @@ const Signup = () => {
   const [confirmpassword, setConfirmpassword] = useState();
   const [password, setPassword] = useState();
   const [pic, setPic] = useState();
-  const [picLoading, setpicLoading] = useState(false);
+  const [picLoading, setPicLoading] = useState(false);
 
   const submitHandler = async () => {
-    setpicLoading(true);
+    setPicLoading(true);
     if (!name || !email || !password || !confirmpassword) {
       toast({
         title: "Please Fill all the Feilds",
@@ -30,7 +30,7 @@ const Signup = () => {
         isClosable: true,
         position: "bottom",
       });
-      setpicLoading(false);
+      setPicLoading(false);
       return;
     }
     if (password !== confirmpassword) {
@@ -69,7 +69,7 @@ const Signup = () => {
         position: "bottom",
       });
       localStorage.setItem("userInfo", JSON.stringify(data));
-      setpicLoading(false);
+      setPicLoading(false);
       history.push("/chats");
     } catch (error) {
       toast({
@@ -80,12 +80,12 @@ const Signup = () => {
         isClosable: true,
         position: "bottom",
       });
-      setpicLoading(false);
+      setPicLoading(false);
     }
   };
 
   const postDetails = (pics) => {
-    setpicLoading(true);
+    setPicLoading(true);
     if (pics === undefined) {
       toast({
         title: "Please Select an Image!",
@@ -100,7 +100,7 @@ const Signup = () => {
     if (pics.type === "image/jpeg" || pics.type === "image/png") {
       const data = new FormData();
       data.append("file", pics);
-      data.append("upload_preset", "chat-app");
+      data.append("upload_preset", "Chat-App");
       data.append("cloud_name", "dtq5wpn2i");
       fetch("https://api.cloudinary.com/v1_1/dtq5wpn2i/image/upload", {
         method: "post",
@@ -110,11 +110,11 @@ const Signup = () => {
         .then((data) => {
           setPic(data.url.toString());
           console.log(data.url.toString());
-          setpicLoading(false);
+          setPicLoading(false);
         })
         .catch((err) => {
           console.log(err);
-          setpicLoading(false);
+          setPicLoading(false);
         });
     } else {
       toast({
@@ -124,7 +124,7 @@ const Signup = () => {
         isClosable: true,
         position: "bottom",
       });
-      setpicLoading(false);
+      setPicLoading(false);
       return;
     }
   };
